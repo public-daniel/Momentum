@@ -1,0 +1,43 @@
+repos:
+  # 1. Standard file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-toml
+      - id: check-merge-conflict
+
+  # 2. Rust Linting & Formatting via Justfile
+  #    This uses the 'hook-checks' task from the Justfile for speed.
+  - repo: local
+    hooks:
+      - id: just-hook-checks
+        name: Run Just pre-commit checks (fmt, lint)
+        entry: just hook-checks
+        language: system
+        types: [rust]
+        pass_filenames: false
+        # verbose: true       # Optional: Uncomment for more detailed output during run
+
+  # 3. Rust Security Audit via Justfile (only run on push)
+  - repo: local
+    hooks:
+      - id: just-audit-push
+        name: Run Just audit (on push)
+        entry: just audit
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+  # 4. Typo Checks
+  - repo: https://github.com/crate-ci/typos
+    rev: b1a1ef3
+    hooks:
+      - id: typos
+        name: Check for typos
+        description: Check for common typos in source code
+        # Exclude vendor directories or generated files if necessary
+        # exclude: "^vendor/|^generated/"
