@@ -1,6 +1,6 @@
 [package]
 name = "momentum"
-version = "0.0.1"
+version = "0.1.0"
 edition = "2024"
 
 [dependencies]
@@ -40,3 +40,11 @@ anyhow = "1.0.97"
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 thiserror = "2.0.12"
+sqlite-vec = "0.1.6"
+
+[profile.release]
+opt-level = "z"   # Optimize for size
+lto = true        # Enable link-time optimization
+codegen-units = 1 # Reduce the number of code generation units
+strip = true      # Strip debug symbols
+panic = "abort"   # Use abort on panic

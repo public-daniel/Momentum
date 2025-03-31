@@ -1,0 +1,52 @@
+name: Continuous Integration (PR Checks)
+
+# Trigger only on Pull Requests targeting the master branch
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ] # Run on pushes to master too
+
+jobs:
+  ci-checks:
+    name: Run CI Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+
+      - name: Install build dependencies (apt)
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev pkg-config
+
+      - name: Install Just
+        uses: extractions/setup-just@v2
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked # Use --locked for potentially faster/more reproducible install
+
+      # Cache Cargo directories for faster builds
+      # See https://github.com/actions/cache/blob/main/examples.md#rust---cargo
+      - name: Cache Cargo directories
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/ # Cache build artifacts too
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+             ${{ runner.os }}-cargo-
+
+      # Run the comprehensive CI check suite from the Justfile
+      # This ensures PRs pass fmt, lint, tests, and audit
+      - name: Run CI Checks (fmt, lint, test, audit)
+        run: just ci

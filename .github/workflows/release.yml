@@ -1,0 +1,138 @@
+# .github/workflows/release.yml
+name: Create Release and Build Artifacts
+
+# Trigger only when a tag matching v*.*.* is pushed
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write # Required to create releases and upload assets
+
+jobs:
+  build-and-release:
+    name: Build and Release Momentum
+    runs-on: ubuntu-latest # Using Ubuntu as it aligns with your install/deploy scripts
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Install Just
+        uses: extractions/setup-just@v2
+
+      # Cache Cargo directories (similar to ci.yml, good for speed)
+      - name: Cache Cargo directories
+        uses: actions/cache@v4
+        id: cache-cargo # Give cache step an id
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/ # Cache target dir between build and packaging
+          key: ${{ runner.os }}-release-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-release-cargo-
+
+      # Build the release binary using your Justfile task
+      - name: Build release binary
+        run: just release # This creates target/release/momentum
+
+      # Prepare release artifacts directory
+      # Structure needs to match what install.sh expects in release package mode
+      - name: Prepare artifact structure
+        run: |
+          staging_dir="momentum-${{ github.ref_name }}" # e.g., momentum-v1.0.0
+          mkdir -p "${staging_dir}/scripts"
+
+          echo "Copying binary..."
+          cp target/release/momentum "${staging_dir}/momentum"
+
+          echo "Copying install and health-check scripts..."
+          cp deploy/scripts/install.sh "${staging_dir}/scripts/"
+          cp deploy/scripts/health-check.sh "${staging_dir}/scripts/"
+
+          echo "Copying systemd unit file..."
+          cp deploy/systemd/momentum.service "${staging_dir}/momentum.service"
+
+          echo "Copying config template..."
+          cp deploy/config/config.toml.example "${staging_dir}/config.toml.example" # Make sure this path is correct
+
+          echo "Artifact staging directory structure:"
+          ls -R "${staging_dir}"
+
+      # Create the compressed tarball archive
+      - name: Create release archive
+        run: |
+          staging_dir="momentum-${{ github.ref_name }}"
+          archive_name="momentum-${{ github.ref_name }}.tar.gz"
+          # Create tarball containing the *contents* of the staging dir
+          tar czf "${archive_name}" -C "${staging_dir}" .
+          echo "ARCHIVE_NAME=${archive_name}" >> $GITHUB_ENV # Save for later steps
+
+      # Generate checksums for the archive
+      - name: Generate checksums
+        run: |
+          sha256sum "${{ env.ARCHIVE_NAME }}" > checksums.txt
+          echo "Checksums generated:"
+          cat checksums.txt
+
+      # Create the GitHub Release entry
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }} # Use the tag that triggered the workflow (e.g., refs/tags/v1.0.0)
+          release_name: Momentum ${{ github.ref_name }} # e.g., "Momentum v1.0.0"
+          body: |
+            Release notes for Momentum ${{ github.ref_name }}
+
+            **Installation**
+
+            * **Bootstrap (Recommended):**
+                ```bash
+                curl -sSL https://raw.githubusercontent.com/public-daniel/Momentum/master/deploy/scripts/bootstrap.sh | bash -s -- --version ${{ github.ref_name }}
+                ```
+
+            * **Manual:**
+                See `deploy.md` in the source code for manual installation instructions.
+
+            **Checksums**
+
+            Verify the integrity of the downloaded archive using the attached `checksums.txt` file:
+            ```bash
+            sha256sum -c <(grep "momentum-${{ github.ref_name }}.tar.gz" checksums.txt)
+            ```
+          draft: false # Set to true if you want to manually review before publishing
+          prerelease: false  # Set to true if this is a pre-release (e.g., v1.0.0-rc1)
+
+      # Upload the release archive (.tar.gz) to the GitHub Release
+      - name: Upload Release Archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ env.ARCHIVE_NAME }}
+          asset_name: ${{ env.ARCHIVE_NAME }}
+          asset_content_type: application/gzip
+
+      # Upload the checksums file to the GitHub Release
+      - name: Upload Checksums
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./checksums.txt
+          asset_name: checksums.txt
+          asset_content_type: text/plain

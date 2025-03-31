@@ -15,10 +15,10 @@ setup:
     @echo "Setting up development environment..."
     @echo "Checking for required Rust components..."
     @rustup component add clippy rustfmt
-    @echo "Installing optional cargo tools (audit, outdated)..."
-    @cargo install cargo-audit cargo-outdated sqlx-cli --quiet || true # Use || true to ignore errors if already installed
+    @echo "Installing optional cargo tools (audit, outdated, sqlx, cocogitto)..."
+    @cargo install cargo-audit cargo-outdated sqlx-cli cocogitto --locked --quiet || true # Use || true to ignore errors if already installed
     @echo "Installing Git hooks via uvx and .pre-commit-config.yaml..."
-    @uvx pre-commit install # Installs hooks based on .pre-commit-config.yaml
+    @uvx pre-commit install --hook-type commit-msg --hook-type pre-commit --hook-type pre-push
     @echo "✅ Development environment setup complete!"
     @echo "Note: Ensure .pre-commit-config.yaml exists before running setup."
 

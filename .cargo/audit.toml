@@ -1,0 +1,8 @@
+[advisories]
+# Ignoring RUSTSEC-2023-0071 (rsa v0.9.8) pulled in via sqlx-mysql v0.8.3.
+# Vulnerability is a timing side-channel in RSA PKCS#1 v1.5 decryption (Marvin Attack).
+# sqlx-mysql appears in Cargo.lock due to upstream Cargo issue (#10801) related to optional/weak features
+# (triggered by enabling the 'chrono' feature for sqlx), even when the 'mysql' feature is not enabled.
+# The vulnerable code is not expected to be compiled into the final binary as we only use sqlite.
+# Awaiting upstream fix in Cargo or sqlx.
+ignore = ["RUSTSEC-2023-0071"]

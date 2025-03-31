@@ -21,3 +21,9 @@ target/
 
 # Local Cargo config
 config.toml
+
+# MacOS
+.DS_Store
+
+# Database Files
+data

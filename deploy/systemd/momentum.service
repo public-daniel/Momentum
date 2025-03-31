@@ -1,0 +1,67 @@
+[Unit]
+Description=Momentum Application Service
+Documentation=https://github.com/public-daniel/Momentum
+# Ensure network interfaces are fully configured before starting
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Type=simple is usually appropriate when the ExecStart process is the main service process.
+Type=simple
+
+# Run as the dedicated momentum user and group
+User=momentum
+Group=momentum
+
+# Set working directory to the data directory. Relative paths for data/backups
+# in the config (if used) would resolve relative to this path.
+WorkingDirectory=/var/lib/momentum
+
+# Command to start the application server process.
+# Ensure '/opt/momentum/momentum' exists and accepts the 'run' subcommand.
+ExecStart=/opt/momentum/momentum run
+
+# Restart the service if it fails
+Restart=on-failure
+# Wait 5 seconds before restarting
+RestartSec=5s
+
+# Environment variables passed to the application
+# Specify the path to the configuration file. Ensure your app reads this variable.
+Environment="MOMENTUM_CONFIG_PATH=/etc/momentum/config.toml"
+# Optional: Uncomment if your app specifically uses RUST_LOG and you want to set it here.
+# Environment="RUST_LOG=info"
+# Load sensitive environment variables (API keys, passwords, etc.) from this file.
+EnvironmentFile=/etc/momentum/secrets.env
+
+# === Security Hardening ===
+# Prevent the service from writing to /usr, /boot, /etc
+ProtectSystem=full
+# Use a private /dev, restricting device access
+PrivateDevices=true
+# Prevent the service from gaining new privileges
+NoNewPrivileges=true
+# Prevent the service from accessing user home directories
+ProtectHome=true
+# Prevent write access to kernel tunables
+ProtectKernelTunables=true
+# Prevent kernel module loading/unloading
+ProtectKernelModules=true
+# Prevent service from interfering with control groups
+ProtectControlGroups=true
+# Restrict network address families (IPv4, IPv6, Unix sockets)
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+# Prevent memory regions from being simultaneously writable and executable
+MemoryDenyWriteExecute=true
+# === End Security Hardening ===
+
+# Logging configuration
+# Send standard output and standard error to the systemd journal
+StandardOutput=journal
+StandardError=journal
+# Tag logs in the journal with 'momentum' for easier filtering (e.g., journalctl -t momentum)
+SyslogIdentifier=momentum
+
+[Install]
+# Enable this service to start automatically during boot in the standard multi-user target
+WantedBy=multi-user.target

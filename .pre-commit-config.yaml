@@ -4,11 +4,12 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
-      - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
       - id: check-toml
       - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
 
   # 2. Rust Linting & Formatting via Justfile
   #    This uses the 'hook-checks' task from the Justfile for speed.
@@ -40,4 +41,16 @@ repos:
         name: Check for typos
         description: Check for common typos in source code
         # Exclude vendor directories or generated files if necessary
-        # exclude: "^vendor/|^generated/"
+        exclude: "^static/|^vendor/|^generated/"
+
+  # 5. Conventional Commit Message Linting (Python - NEW!)
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: "v4.0.0"
+    hooks:
+      - id: conventional-pre-commit
+        name: Check commit message follows Conventional Commits (Python)
+        # This hook runs specifically during the 'commit-msg' stage
+        stages: [commit-msg]
+        # This hook reads configuration from pyproject.toml by default,
+        # but has sensible Conventional Commit defaults if no config is found.
+        # args: [] # Add arguments here if needed for config (e.g., --strict-scope)
