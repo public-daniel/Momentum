@@ -4,9 +4,9 @@
 
 ### Added
 
-- Initial project structure and basic "Hello World" functionality
+- Initial project structure and core functionality.
 - Setup CI/CD workflows (`ci.yml`, `release.yml`).
-- Added `Justfile` for common development tasks.
+- Added `justfile` for common development tasks.
 - Added `pre-commit` configuration for local checks.
 - Included deployment scripts (`install.sh`, `health-check.sh`, `bootstrap.sh`) and systemd unit file.
 - Added initial `deploy.md` documentation.
