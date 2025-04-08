@@ -111,6 +111,7 @@ This is the core engine of Momentum, translating insight and intention into acti
   * **Public Learning (Optional):** Share aspects of your process/learnings/**Scoreboard**/ **Pact insights** as appropriate (learning in public).
   * **Visibility Tools:** Use shared tools for relevant Goals/WIGs/Experiments if collaborating. The tool implementing Momentum should provide **Scoreboard** views and potentially Pact summaries.
   * **(Potential) LLM Integration:** Assist in summarizing review data, analyzing **Scoreboard** trends, highlighting **Pact** insights, prompting reflection questions, drafting accountability updates (use thoughtfully).
+  * **Comprehensive:** You should be tracking and reviewing things that live outside the Momentum software. For example: Apple Watch Health Data, Screen Time, Finances, etc.
 
 ---
 
