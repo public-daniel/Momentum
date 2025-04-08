@@ -1,86 +1,129 @@
 # Momentum
 
-**Build momentum in your life by consistently focusing on your priorities and tracking your habits.**
+**Build momentum in your life by consistently focusing on your priorities and tracking your actions.**
 
-Momentum is a minimalist, self-contained, self-hosted Rust web application designed for personal productivity, habit tracking, and accountability across multiple time horizons. Inspired by the "Snowball Effect" philosophy – the idea that small, consistent positive actions compound over time – this tool helps you define, track, and review your goals and habits across different timeframes (daily, weekly, monthly, quarterly, annually).
+Momentum is a minimalist, self-contained, self-hosted Rust web application designed to help implement the **Momentum framework** for personal productivity and continuous improvement. It guides you through understanding yourself (**Understand Yourself**), defining your direction (**North Star**), setting impactful **Goals** driven by trackable **Lead Measures**, building supportive **Habits & Routines**, learning through **Experiments**, and engaging in a cyclical **Operating Rhythm** of planning and review across multiple time horizons (daily, weekly, monthly, quarterly, annually).
 
-Built with Rust for performance and reliability, it operates as a single binary with an embedded SQLite database and all static assets, requiring minimal maintenance. It prioritizes server-side rendering with minimal JavaScript (using HTMX) for a clean, fast user experience focused on content and reflection.
+This tool moves beyond simple task lists or habit tracking. It emphasizes deep self-awareness, strategic focus on **Wildly Important Goals (WIGs)**, disciplined tracking of the **Lead Measures** that predict success, intentional **Experimentation** for learning and exploration, and structured **Reflection** to ensure continuous adaptation and alignment with your long-term vision via a **Cadence of Accountability**.
+
+Built with Rust for performance and reliability, it operates as a single binary with an embedded SQLite database and all static assets, requiring minimal maintenance. It prioritizes server-side rendering with minimal JavaScript (using HTMX) for a clean, fast user experience focused on clarity, tracking, and insight generation.
 
 ## Philosophy: The Snowball Effect
 
-The core idea behind Momentum is that significant progress isn't usually the result of massive, infrequent bursts of effort, but rather the aggregation of small, consistent actions. Like a snowball rolling downhill, doing the right things consistently, even on a small scale, builds momentum that leads to greater results over time.
+The core idea behind Momentum is that significant progress isn't usually the result of massive, infrequent bursts of effort, but rather the aggregation of small, consistent, *well-directed* actions. Like a snowball rolling downhill, consistently executing the *right* inputs (your Lead Measures and Habits), even on a small scale, builds momentum that leads to greater results over time.
 
 This tool is designed to facilitate that process by:
 
-1. **Clarifying Focus:** Encouraging you to define clear priorities at the start of each time period.
-2. **Tracking Consistency:** Making habit tracking simple and visual, reinforcing the patterns you want to build (or break).
-3. **Enabling Reflection:** Providing a structure for reviewing your progress, learning from past periods, and adjusting your course for the future.
-4. **Promoting Simplicity:** Offering a system that is straightforward and encourages actual use. The best system is one you'll actually use.
-5. **Enhancing Accountability:** Increasing self-awareness through private tracking and review.
+1. **Grounding Action in Clarity:** Helping you define and connect with your **North Star** (vision, values) and **Understand Yourself** (patterns, capacity).
+2. **Sharpening Focus:** Guiding the selection of **Wildly Important Goals (WIGs)** and the crucial **Lead Measures** that drive them.
+3. **Tracking Inputs & Consistency:** Making tracking of **Lead Measures**, **Habits**, and **Experiment** actions simple and visual.
+4. **Enabling Structured Reflection:** Providing dedicated spaces and prompts for reviewing progress, confronting data (especially the **Scoreboard**), learning from experience (using tools like **PMN**, **Triple Check**, **Steering Sheet**), and adapting your approach.
+5. **Promoting Simplicity & Sustainability:** Offering a cohesive system that encourages consistent use through clear workflows and minimal friction.
+6. **Enhancing Accountability:** Increasing self-awareness and follow-through via the **Cadence of Accountability** built around reviewing performance data and reflecting on learnings.
 
 ## Overview
 
-Momentum is a comprehensive personal productivity tool built to help you establish positive habits, maintain focus on priorities, and track your progress over time. The application follows a simple but powerful methodology: set intentions at the beginning of each time period, track your consistency throughout, and reflect on your progress at the end. This creates a virtuous cycle of continuous improvement.
+Momentum provides a comprehensive system to implement the Momentum framework. It helps you translate your long-term vision into actionable daily, weekly, and monthly steps, focusing effort on what truly matters. By tracking not just outcomes, but the key input behaviors (**Lead Measures**) and learning through **Experiments**, you create a powerful feedback loop for continuous improvement. While designed as a cohesive system, its components can also be used modularly – for instance, focusing solely on habit tracking or goal/lead measure management.
 
-The application is built as a single binary that includes all static assets, making deployment simple and maintenance minimal. It uses SQLite for data storage with advanced search capabilities through FTS5 and optional vector similarity search.
+The application integrates planning, tracking, and reflection across different time scales. It is built as a single binary for simple deployment and uses SQLite for robust, self-contained data storage, including advanced search capabilities.
 
 ## Core Features
 
-### User-Facing Features
+Momentum provides a suite of integrated features designed to support the entire Momentum framework lifecycle:
 
-* **Multi-horizon Planning & Review**: Set intentions, define priorities, and conduct structured reviews across:
-  * **Daily**: Morning planning (e.g., top 3 priorities) and evening reflection.
-  * **Weekly**: Planning focus areas and reviewing accomplishments/lessons.
-  * **Monthly**: Goal setting and retrospective assessment.
-  * **Quarterly**: Setting broader objectives and assessing progress.
-  * **Annual**: Defining yearly vision and conducting a year-in-review.
-* **Habit Tracking**:
-  * Define and log both positive habits to build and negative habits to reduce.
-  * Specify frequency (daily, specific days, x times per week).
-  * Visualize streak data with the "Seinfeld method" calendar view ("Don't break the chain").
-  * Analyze adherence rates and trends over time with charts.
-  * Categorize habits (e.g., health, productivity, relationships).
-* **Journaling & Notes**: Capture thoughts, reflections, and logs using Markdown within specific time periods or entries.
-* **Progress Visualization**:
-  * Streak calendars.
-  * Charts showing habit consistency and adherence rates (via Chart.js).
-  * Progress bars for goal completion (planned).
-  * Heatmaps displaying activity intensity (planned).
-  * Historical comparisons (planned).
-* **Powerful Search**:
-  * Quickly find past priorities, notes, or reflections using full-text search (SQLite FTS5).
-  * Discover related entries through semantic similarity search (via `sqlite-vec`, optional).
+### 1. Dashboard & Scoreboard
 
-### Technical & Architectural Features
+* **Dashboard: Centralized Overview:** The main dashboard provides a comprehensive snapshot of your current status across the framework – including upcoming priorities, active habits needing attention, ongoing experiments, pending reviews, and summaries of recent activity and **Lead Measure** performance.
+* **Scoreboard: Focused Lead Measure Tracking:** A dedicated view, inspired by 4DX, focused *specifically* on visualizing performance trends for the crucial **Lead Measures** linked to your **Wildly Important Goals (WIGs)**. It compares actual performance against targets, providing direct feedback on the input activities driving your most important outcomes and forming a core part of the **Cadence of Accountability**.
+* **Quick Access:** Easy navigation to planning, tracking, and review functions for different time horizons.
+
+### 2. Understand Yourself
+
+* **Structured Self-Assessment:** Capture reflections on energy patterns, work rhythms, strengths, weaknesses, friction points, and lessons learned (potentially starting with flexible Markdown entries, evolving to more structured prompts aligned with framework questions).
+* **Pattern Recognition:** Tools to tag, link, and search past reflections to identify recurring themes and insights over time.
+* **Foundation for Action:** This section serves as the baseline understanding that informs goal setting, habit formation, and experiment design.
+
+### 3. North Star
+
+* **Vision & Values Definition:** Define and revisit core values, guiding principles, and long-term vision across key life domains (potentially starting with dedicated Markdown documents, planned features for structured definition and review).
+* **Core Factor Identification:** Articulate the essential factors required for personal success and well-being.
+* **Alignment Check:** Reference North Star elements during planning and review cycles to ensure actions and goals remain aligned with what truly matters.
+
+### 4. Habits & Routines
+
+* **Define & Track:** Create entries for positive habits to build and negative habits to reduce/eliminate.
+* **Flexible Scheduling:** Specify frequency (daily, specific days, X times per week/month).
+* **Visual Tracking:** Log daily adherence with simple check-offs. Visualize consistency using streak calendars ("Don't break the chain") and adherence charts.
+* **Categorization & Analysis:** Group habits (e.g., Health, Work, Learning) and analyze trends over time.
+* **Routine Support:** Group habits into routines (e.g., Morning Startup, Evening Shutdown) for streamlined tracking (planned feature).
+
+### 5. Goals & Outcomes (incl. WIGs & Milestones)
+
+* **Goal Definition:** Define specific, measurable goals and desired outcomes (Lag Measures), potentially starting with Markdown and evolving to structured goal setting.
+* **WIG Identification:** Clearly designate the 1-3 **Wildly Important Goals (WIGs)** requiring disproportionate focus for a given period (e.g., Quarter, Year).
+* **Lead Measure Definition & Tracking:** For Goals (especially WIGs), define the crucial, influenceable **Lead Measures** (input actions). Set targets and track performance rigorously (e.g., hours spent, tasks completed, frequency achieved). This data directly feeds the **Scoreboard**.
+* **Milestone Breakdown:** Decompose larger Goals/WIGs into smaller projects, milestones, or tasks for actionable progress tracking.
+
+### 6. Experiments & Exploration (Pacts for Learning)
+
+* **Structured Pact Definition:** Define time-bound experiments (**Pacts**) using the format `I will explore [Hypothesis/Question/Interest] by doing [Action] with [Frequency] for [Duration/Repetitions]`. Link Pacts to their originating goals, problems, or curiosities for context. State the guiding **Hypothesis or Question** to focus observation.
+* **Adherence & Insight Capture:** Track **Pact adherence** (completion of the action). Capture lightweight **qualitative notes** (observations, feelings, insights, obstacles) during the Pact. Optionally track relevant **quantitative data** as points for reflection, not as pass/fail criteria. *Note: Focus is on process completion and learning, distinct from outcome-driven **Lead Measure** tracking for WIGs.*
+* **Reflection & Adaptation:** Utilize integrated reflection tools (like the **Steering Sheet** framework) upon Pact completion, analyzing captured notes and data to inform the decision to **Persist** (continue/adopt), **Pause** (stop for now), or **Pivot** (modify and iterate).
+
+### 7. Operating Rhythm (Planning & Review)
+
+* **Multi-Horizon Interface:** Dedicated views and workflows for planning and reviewing across Daily, Weekly, Monthly, Quarterly, and Annual cycles.
+* **Guided Planning:** Prompts to set priorities (with emphasis on WIGs), schedule **Lead Measure** actions and Experiment tasks, and align with the **North Star**. Guided prompts for daily planning using **Time Blocking** principles (e.g., allocating tasks and priorities, including **Lead Measure** actions, to specific 30-minute intervals throughout the day), potentially starting with Markdown output. A dedicated simple visual planning interface is a possible future enhancement, but full calendar functionality is not planned.
+* **Structured Review Process:** Templates and prompts guide reflection, incorporating framework tools like **PMN (Plus Minus Next)** and **Triple Check** (for procrastination analysis). Facilitates reviewing the **Scoreboard**, Habit consistency, Goal progress, and Experiment learnings.
+* **Cyclical Continuity:** Seamlessly use insights from one period's review to inform the planning of the next.
+
+### 8. Accountability
+
+* **Self-Accountability Engine:** The core review cycle, driven by confronting **Scoreboard** data and reflection prompts, provides the primary accountability mechanism (**Cadence of Accountability**).
+* **Data Visualization:** Clear charts and summaries of Habits, Lead Measure performance, and Goal progress support honest self-assessment.
+* **Review Summaries:** Generate concise summaries of reviews (e.g., PMN outputs, key decisions) for personal tracking or potential sharing (planned feature).
+
+### Supporting Features
+
+* **Journaling & Notes:** Capture freeform thoughts, logs, and insights using Markdown, linkable to specific dates, periods, goals, or experiments.
+* **Powerful Search:** Full-text search (SQLite FTS5) across all entries (goals, notes, reviews, experiments).
+* **Progress Visualization:** Includes streak calendars, habit charts, goal progress indicators (planned), activity heatmaps (planned), and the crucial **Lead Measure Scoreboard**.
+* **Exploratory/Future Consideration:** Potential for semantic similarity search (`sqlite-vec`) to find related concepts, though not currently planned for initial versions.
+
+## Technical & Architectural Features
 
 * **Single Binary Deployment**: All assets (CSS, JS, etc.) embedded in one executable for simple deployment.
 * **Minimalist & Self-Contained**: Designed for single-user self-hosting with minimal external dependencies.
 * **CLI Interface**: Manage backend tasks like running the server, backups, restores, and migrations.
 * **Server-Side Rendering**: HTML generated on the server using Maud templates for speed and simplicity.
 * **Minimal JavaScript**: HTMX used for dynamic interactions without a heavy frontend framework.
-* **Markdown Support**: Native rendering of Markdown using `pulldown-cmark`.
-* **Simple Styling**: Water.css provides clean, classless styling out-of-the-box.
+* **Markdown Support**: Native rendering of Markdown using `pulldown-cmark` for notes, reflections, and initial structured entries.
+* **Simple Styling**: Water.css provides clean, classless styling out-of-the-box, adaptable with custom CSS.
 * **Embedded Database**: SQLite used for zero-configuration, file-based storage.
 * **Type-Safe Database Access**: SQLx for compile-time checked SQL queries.
-* **Easy Self-Hosting**: Streamlined installation script and manual steps provided for Ubuntu Server.
-* **Systemd Integration**: Reliable service management via systemd unit file.
-* **Caddy Support**: Simple HTTPS setup with automatic certificate management using Caddy.
+* **Easy Self-Hosting**: Streamlined installation script and manual steps provided for common platforms (e.g., Ubuntu Server).
+* **Systemd Integration**: Reliable service management via systemd unit file (example provided).
+* **Caddy Support**: Simple HTTPS setup with automatic certificate management using Caddy (example config provided).
+* **Evolving Structure:** Data models designed to support initial Markdown-heavy usage for some features (like North Star, Goals) while allowing future evolution towards more structured data capture.
 
-## How It Works: The Workflow
+## How It Works: The Momentum Workflow
 
-The intended flow for using Momentum follows a cyclical pattern:
+The intended flow leverages the cyclical nature of the Momentum framework:
 
-1. **Define Period:** At the start of a new Day, Week, Month, Quarter, or Year, create an entry for that period.
-2. **Set Priorities/Goals:** Within that period's entry, list your key objectives, focus areas, or tasks.
-3. **Track Habits:** Throughout the period (typically daily), log whether you adhered to your tracked habits.
-4. **Record Notes/Journal:** Add reflections, insights, logs, or related information using Markdown.
-5. **Review Period:** At the end of the period, use the application to review:
-    * What priorities were accomplished?
-    * How consistent were your habits? (View visualizations)
-    * What were the key lessons learned?
-6. **Plan Next Period:** Use the insights from your review to inform the priorities for the next cycle.
+1. **Grounding (Initial & Periodic):** Use the **Understand Yourself** and **North Star** sections to capture foundational insights, values, and vision. Revisit these during higher-level reviews (Quarterly, Annual).
+2. **Set Direction (Quarterly/Annually):** Based on your North Star, define 1-3 **Wildly Important Goals (WIGs)** for the upcoming period. Break them down into initial **Milestones**.
+3. **Define Inputs (Weekly/Monthly):** For each WIG, identify the critical **Lead Measures**. Define how you will track them and set targets (e.g., "Log 5 hours of focused work on WIG A per week"). Define any **Habits** supporting your goals or well-being. Identify any **Experiments** you want to run.
+4. **Plan (Daily/Weekly):**
+    * **Weekly:** Review the **Scoreboard** (Lead Measure performance). Conduct a **PMN** review. Plan the week's priorities, focusing on WIGs. Schedule specific blocks of time (conceptually, using **Time Blocking**) for **Lead Measure** actions and **Experiment** tasks.
+    * **Daily:** Set 1-3 key priorities aligned with weekly goals. Refine the day's schedule. Prepare for executing Lead Measures.
+5. **Act & Track (Daily):** Execute your plan. Check off completed **Habits**. Log performance on **Lead Measures** (this updates the **Scoreboard**). Track adherence and capture data for active **Experiments**. Record brief notes or insights in the Journal.
+6. **Review & Reflect (Daily/Weekly/Monthly+):**
+    * **Daily:** Briefly review accomplishments, challenges, update tracking.
+    * **Weekly:** Conduct a thorough review. Analyze the **Scoreboard** – how did Lead Measure performance correlate with perceived progress? Review Habit consistency. Use **PMN** for insights. If procrastinating, use **Triple Check**. If an **Experiment** ended, use the **Steering Sheet** framework to decide next steps.
+    * **Monthly/Quarterly/Annual:** Conduct higher-level reviews assessing Goal/WIG progress against Lead Measure trends, evaluating Experiment outcomes, revisiting North Star alignment, and adjusting the overall system.
+7. **Adapt & Iterate:** Use the insights from reviews to adjust goals, refine Lead Measures, adopt successful Experiments as Habits, discard ineffective strategies, and plan the next cycle. This continuous loop drives progress and learning.
 
-*(Screenshots or GIFs of the UI would go here once available)*
+(*Screenshots or GIFs of the UI would go here once available, ideally showing the Scoreboard, Experiment definition, WIG/Lead Measure setup, and Review templates.*)
 
 ## Technology Stack
 
@@ -444,32 +487,36 @@ Reload Caddy after creating or changing the configuration: `sudo systemctl reloa
 
 ## Usage Examples
 
-### Setting Daily Priorities
+### Defining a WIG and Lead Measures
 
-1. Navigate to the "Daily" view or planning section.
-2. Enter your top 1-3 priorities for the day in the designated area.
-3. Optionally, add secondary tasks or notes for the day.
-4. As you complete priorities throughout the day, mark them as done in the UI.
-5. At the end of the day, use the reflection section to note accomplishments, challenges, or thoughts.
+1. Navigate to the "Goals & Outcomes" section.
+2. Create a new Goal, e.g., "Launch New Consulting Service". Mark it as a **WIG** for the current Quarter. Set a target date (e.g., end of Q3).
+3. Within the WIG's detail view, define **Lead Measures**:
+    * Measure 1: "Hours Focused Work on Service Dev/Marketing". Type: Time Duration. Target: 10 hours/week.
+    * Measure 2: "Prospect Outreach Calls Made". Type: Count. Target: 5 calls/week.
+4. These Lead Measures will now appear on your **Scoreboard** and prompt for tracking during daily/weekly workflows.
 
-### Tracking Habits
+### Weekly Review with Scoreboard & PMN
 
-1. Go to the "Habits" section and click "Add Habit".
-2. Define the habit name (e.g., "Read for 30 minutes").
-3. Set its frequency (e.g., Daily, Mon/Wed/Fri, 3 times per week).
-4. Assign a category (e.g., "Learning", "Health").
-5. Save the habit.
-6. Each day (or as appropriate), visit the habit tracking interface (e.g., daily view) and check off the habits you completed.
-7. View the streak calendar or charts in the "Habits" section to see your consistency over time.
+1. Navigate to the "Weekly Review" section.
+2. The interface displays the **Scoreboard** showing performance against targets for "Hours Focused Work" and "Prospect Outreach Calls" for the past week.
+3. Review Habit consistency charts for the week.
+4. Use the integrated **PMN** template:
+    * **Plus (+):** Note successes (e.g., "Exceeded target hours on WIG", "Consistent with morning routine").
+    * **Minus (-):** Note challenges (e.g., "Missed call target due to unexpected urgent tasks", "Struggled with evening focus").
+    * **Next (->):** Define actions for next week based on +/- (e.g., "Schedule outreach calls first thing Tuesday/Thursday", "Experiment with a pre-defined evening shutdown routine").
+5. Review progress on WIG milestones and adjust the upcoming week's priorities.
 
-### Quarterly Review
+### Setting Up and Running an Experiment
 
-1. Navigate to the "Quarterly" view or review section at the end of a quarter.
-2. Access the review template provided.
-3. Reflect on the goals you set at the beginning of the quarter: What was achieved? What wasn't? Why?
-4. Review your habit tracking data for the quarter: Which habits were consistent? Where did you struggle? What patterns emerge?
-5. Synthesize key learnings and insights from the past three months.
-6. Use these reflections to set clear, adjusted objectives and focus areas for the upcoming quarter.
+1. Go to the "Experiments" section. Click "New Experiment".
+2. Define the experiment:
+    * **Hypothesis/Question:** "Will blocking internet access except for 3x daily checks improve my deep work focus?"
+    * **Action:** "Use [Specific Tool/Method] to block all non-essential sites. Check email/messaging only at 9am, 1pm, 5pm."
+    * **Duration:** "For 2 weeks."
+    * **Success/Learning Criteria:** "Measure perceived focus level daily (1-5 scale), track number of deep work sessions completed vs planned."
+3. During the 2 weeks, track daily adherence ("Did I follow the blocking protocol? Y/N") and log the focus score and qualitative observations.
+4. At the end of 2 weeks, use the **Steering Sheet** prompts within the Experiment review: Analyze the tracked data (adherence, focus scores, notes) vs Internal Signals (how did it feel?). Decide: **Persist** (make it a routine), **Pause** (not right now), or **Pivot** (modify and re-test, e.g., different check times).
 
 ## Project Structure
 
@@ -1086,23 +1133,62 @@ For more detailed logs, change `log_level` in `/opt/momentum/config.toml` from `
 
 ## Roadmap
 
-*(Example - Adapt based on actual plans)*
+*Note: This roadmap outlines a potential logical progression for implementing the full vision. However, the sequence and priority of features are flexible and subject to change based on development progress and evolving needs.*
 
-* [x] **v0.1**: Core habit tracking (define, log, daily view) & daily priorities. Basic structure. FTS5 Search. CLI for run/backup/migrate. Systemd/Caddy deployment.
-* [ ] **v0.2**: Weekly/Monthly planning & review templates. Basic streak visualization (calendar view). Improved charting (consistency rates).
-* [ ] **v0.3**: Quarterly/Annual planning & review interfaces. Journaling/Notes integration with search. Habit categorization.
-* [ ] **v0.4**: Enhanced analytics and visualizations (trends, heatmaps). Vector similarity search (`sqlite-vec`) for related notes/entries. Data export options.
-* [ ] **v0.5**: UI/UX refinements. User profile settings (start day of week etc.). Potential read-only calendar integration.
-* [ ] **v1.0**: Stable release covering all core features, time horizons, and robust error handling/testing.
+* [ ] **v0.1**: Foundational Setup: Basic Habit definition & daily tracking (checklist, simple streaks). Daily planning/review notes (Markdown). Basic Journaling. CLI for run/backup/migrate. Initial deployment setup (Systemd/Caddy).
+* [ ] **v0.2**: Core Experiments & Weekly Cycle: Experiment definition (Hypothesis, Action, Duration). Experiment adherence tracking (Y/N). Basic Weekly PMN review template (Markdown). Enhanced Habit visualization (Calendar view).
+* [ ] **v0.3**: Goals, WIGs & Lead Measures: Structured Goal definition. WIG designation. Define Lead Measures (types: count, duration, binary) linked to WIGs. Basic Lead Measure tracking input.
+* [ ] **v0.4**: The Scoreboard & Cadence of Accountability: Initial Scoreboard view displaying Lead Measure performance vs targets. Enhanced Weekly Review integrating Scoreboard view. Monthly/Quarterly review structures (Markdown templates initially). Charting for Lead Measures/Habits (Chart.js).
+* [ ] **v0.5**: Deeper Integration & Reflection Tools: Structured Experiment data capture (linking notes/data to hypothesis). Steering Sheet review template/prompts for Experiments. Triple Check prompts for flagged tasks/procrastination. Basic North Star / Understand Yourself sections (Markdown).
+* [ ] **v0.6**: Enhancements & UX: Milestone tracking within Goals/WIGs. Improved Dashboard. UI refinements based on usage.
+* [ ] **v0.7**: Higher-Level Cycles & Polish: Structured Quarterly/Annual review processes. Refined North Star / Understand Yourself interfaces (beyond pure Markdown). User settings (e.g., start day of week). Data export options.
+* [ ] **v0.8**: Full-Text Search on notes.
+* [ ] **v1.0**: Stable Release: All core framework features implemented robustly. Comprehensive testing, d
 
 ## Inspiration and Resources
 
+* The **Momentum Framework** (The core philosophy guiding this tool)
+* **The 4 Disciplines of Execution (4DX)** by McChesney, Covey, Huling (for WIGs, Lead Measures, Scoreboard, Cadence of Accountability)
+* **Atomic Habits** by James Clear (for habit formation principles)
+* **Deep Work** by Cal Newport (for the value of focused effort)
 * The "Don't Break the Chain" method (often attributed to Jerry Seinfeld)
-* Warren Buffett's "Snowball effect" philosophy regarding compounding.
-* Concepts from "Atomic Habits" by James Clear on habit formation.
-* Principles of structured reflection and review used in agile methodologies and personal development.
-* Existing habit tracking and productivity tools (for ideas on features and UI).
+* Concepts of structured reflection (like PMN) used in agile and personal development.
+* Minimalist software principles.
 
-## License
+## Appendix
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### Tools & Technology (Craftsman Mindset)
+
+1. **Organized Memory:** Catch-all tool for remembering things and rediscovering them. It's as easy as just texting things to yourself.
+2. **Apple Calendar:** Personal & Family Calendar (shared)
+3. **Google Calendar:** Work Calendar & Meeting Invites
+4. **GitHub:** Code repositories, snippets / collections, CI/CD
+5. **GnuCash:** Personal finance and investing tracker
+
+### Techniques & Ideas
+
+#### 1. Plus Minus Next (PMN)
+
+* **Purpose:** A simple metacognitive tool for **structured reflection** used to create **growth loops**. It facilitates learning from experience by systematically reviewing a defined period (e.g., a week, the duration of an experiment).
+* **Mechanism:** Involves three columns or sections:
+  * **Plus (+):** Document what went well, successes, achievements, positive feelings, moments of joy, things you're grateful for during the period.
+  * **Minus (-):** Document challenges, obstacles, mistakes, things that didn't go as planned, negative feelings, frustrations, areas needing attention.
+  * **Next (->):** Based on the insights from Plus and Minus, define **actionable steps** or intentions for the *next* period. This focuses on incremental adjustments and continuous improvement.
+* **Use Case:** Typically used for weekly reviews, end-of-experiment analysis, or even team retrospectives to ensure consistent learning and adaptation.
+
+#### 2. Triple Check
+
+* **Purpose:** A diagnostic tool specifically designed to understand the **underlying reasons for procrastination** on a particular task or commitment, moving beyond simple self-blame ("I'm lazy") to identify actionable root causes.
+* **Mechanism:** Involves asking three distinct questions related to different aspects of motivation and capability:
+  * **Head (Rational):** "Is the task appropriate?" (Does it make sense strategically? Does it align with goals? Is the approach sound?) Addresses skepticism about the task's value or method.
+  * **Heart (Emotional/Affective):** "Is the task exciting?" (Does it feel engaging, interesting, or meaningful? Or is there underlying fear, boredom, anxiety, or resentment?) Addresses emotional resistance or lack of intrinsic motivation.
+  * **Hand (Practical/Perceived Ability):** "Is the task doable?" (Do I believe I have the necessary skills, resources, time, or energy to actually perform the action?) Addresses perceived lack of competence or feasibility.
+* **Use Case:** Employed when you notice you are avoiding or delaying a specific action or experiment, to pinpoint the specific friction point and determine the appropriate solution (e.g., redefine strategy [Head], redesign the experience [Heart], request support/training [Hand]).
+
+#### 3. Steering Sheet
+
+* **Purpose:** A decision-making framework used at **key crossroads** (especially after completing an experiment/Pact cycle) to make a more informed and holistic choice about the next direction: **Persist, Pause, or Pivot**. It aims to broaden the decision frame beyond simple gut feelings or narrow pros/cons lists.
+* **Mechanism:** Involves systematically considering and listing two types of factors influencing the decision:
+  * **External Signals:** Objective facts, circumstances, practical limitations, resource availability, feedback received, changes in the environment, alignment with other commitments.
+  * **Internal Signals:** Subjective feelings, emotions, motivation levels, energy levels, self-confidence, sense of alignment with values, gut instincts, level of enjoyment or fulfillment derived from the activity.
+* **Use Case:** Applied when evaluating the results and experience of an experiment or significant phase of work to consciously decide the next step, ensuring both practical realities and personal feelings are weighed appropriately.
