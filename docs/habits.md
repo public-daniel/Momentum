@@ -78,93 +78,231 @@ Momentum provides four distinct interfaces tailored for different aspects of hab
 
 ### A. Implementation Plan / Development Strategy
 
-This plan outlines a phased approach to building the Habit Tracking feature, focusing on iterative development.
+This section outlines a phased approach to building the Habit Tracking feature, focusing on iterative development, adherence to the established Git workflow, continuous testing, and user feedback (dogfooding).
+
+#### Summary of Expected Commits
+
+(*This list represents the atomic commits within each feature branch. Each phase concludes with a Squash & Merge commit summarizing the overall feature delivered in that phase.*)
+
+**Phase 1: Core Data Model & Basic Habit CRUD (`feature/habits-crud`)**
+
+* `docs(habits): add documentation for habit tracking`
+* `feat(db): add initial habit tracking tables (calendar, categories, habits)`
+* `chore(db): add script/logic to populate calendar table`
+* `feat(habits): implement basic category management (list, add)`
+* `feat(habits): implement habit CRUD operations (list, add, show, edit, delete)`
+* `test(habits): add integration tests for habit and category CRUD`
+* Squash Merge Commit: `feat: implement core habit CRUD (#<PR_Number>)` *(Message refined)*
+
+**Phase 2: Core Tracking Loop (Daily Form) (`feature/habits-daily-log`)**
+
+* `feat(db): add habit_log table for daily tracking`
+* `feat(habits): implement basic habit scheduling logic`
+* `feat(habits): implement backend for daily log view and status updates`
+* `feat(habits): implement daily log form UI with HTMX updates`
+* `test(habits): add tests for scheduling logic and daily logging`
+* Squash Merge Commit: `feat: implement daily habit logging form (#<PR_Number>)` *(Message refined)*
+
+**Phase 3: Basic Display & Streaks (`feature/habits-streaks`)**
+
+* `feat(habits): display today's status on habit lists`
+* `feat(habits): implement current streak calculation for daily habits`
+* `feat(habits): display current streak in UI`
+* *(Optional): `feat(habits): extend streak calculation to weekly/monthly schedules`*
+* `test(habits): add unit tests for streak calculation`
+* Squash Merge Commit: `feat: display habit status and calculate streaks (#<PR_Number>)` *(Message refined)*
+
+**Phase 4: Grid View Implementation (`feature/habits-grid-view`)**
+
+* `feat(habits): implement backend logic for grid view data and cycle status endpoint`
+* `feat(habits): implement grid view UI with HTMX click-to-cycle updates`
+* `test(habits): add integration tests for grid view`
+* Squash Merge Commit: `feat: implement habit tracking grid view (#<PR_Number>)` *(Message refined)*
+
+**Phase 5: Notes Implementation (`feature/habits-notes`)**
+
+* `feat(db): add habit_notes table`
+* `feat(ui): add markdown rendering support for notes`
+* `feat(habits): allow adding/editing notes on daily log entries`
+* `feat(habits): implement habit detail view with general notes and notes feed`
+* `test(habits): add tests for habit notes functionality`
+* Squash Merge Commit: `feat: implement habit notes (daily and general) (#<PR_Number>)` *(Message refined)*
+
+**Phase 6: Statistics & Visualization (`feature/habits-stats`)**
+
+* `feat(habits): implement calendar heatmap visualization`
+* `feat(habits): add basic trend charts (e.g., completion rate)`
+* `feat(habits): add filtering options to statistics view`
+* `test(habits): add tests for statistics data endpoints`
+* Squash Merge Commit: `feat: implement statistics view with heatmap and charts (#<PR_Number>)` *(Message refined)*
+
+**Phase 7: Refinement & Polish (`chore/habits-polish` or `feature/*`)**
+
+* *(Commits will vary: e.g., `fix(habits): correct streak calculation edge case`, `refactor(ui): improve grid view responsiveness`, `perf(db): add index to habit_log query`, `style(habits): align habit detail layout`)*
+* Squash Merge Commit: `chore: refine and polish habit tracking feature (#<PR_Number>)` *(Message refined)*
+
+---
+
+#### Phased Development Strategy Details
+
+**Preparation:**
+
+1. **Sync `master`:** `git checkout master && git pull origin master`
+2. **Review:** Ensure comfort with the data model, UI concepts, and overall goals.
+
+---
 
 **Phase 1: Core Data Model & Basic Habit CRUD**
 
-* **Goal:** Establish the database structure and basic habit management.
-* **Steps:**
-    1. Define/create `calendar`, `habit_categories`, `habits` tables (SQLx migrations).
-    2. Populate `calendar` table with a sufficient date range.
-    3. Create Rust structs for `Habit` and `HabitCategory` (`sqlx::FromRow`).
-    4. Implement basic category management (Add/List/maybe Edit).
-    5. Implement Actix handlers & Maud templates for:
-        * Listing all habits (simple table).
-        * Displaying "Add Habit" form (including category selection).
-        * POST handler to create `habits` record.
-        * Displaying "Edit Habit" form (pre-filled).
-        * POST/PUT handler to update `habits` record.
-        * POST/DELETE handler to delete `habits` record.
-  * **Focus:** Get the basic data structure and non-tracking habit management working.
+* **Goal:** Establish database structure and enable basic creation, reading, updating, and deletion of habits and categories, without tracking functionality.
+* **Git:**
+  * Create branch: `git checkout -b feature/habits-crud`
+* **Tasks:**
+    1. **Migrations:** Create SQLx migration files (`migrations/*.sql`) for `calendar`, `habit_categories`, `habits`. Run `sqlx migrate run` locally.
+        * *Commit: `feat(db): add initial habit tracking tables (calendar, categories, habits)`*
+    2. **Populate Calendar:** Create utility to populate `calendar` table.
+        * *Commit: `chore(db): add script/logic to populate calendar table`*
+    3. **Models:** Define Rust structs (`Habit`, `HabitCategory`) in `src/db/models.rs`.
+    4. **Category CRUD:** Implement DB queries, Actix handlers, and Maud templates for List & Add category.
+        * *Commit: `feat(habits): implement basic category management (list, add)`*
+    5. **Habit CRUD:** Implement DB queries, Actix handlers, and Maud templates for List, GetByID, Add, Update, Delete habits. Include category selection in forms. Wire up basic navigation.
+        * *Commit: `feat(habits): implement habit CRUD operations (list, add, show, edit, delete)`*
+    6. **Testing:** Add basic integration tests for CRUD handlers.
+        * *Commit: `test(habits): add integration tests for habit and category CRUD`*
+* **Git Workflow:**
+  * Push branch: `git push -u origin feature/habits-crud`
+  * Create PR targeting `master`. Title: `feat: implement core habit CRUD`.
+  * Perform Self-Review checklist.
+  * Squash and Merge. Refine commit message to `feat: implement core habit CRUD (#<PR_Number>)`.
+  * Delete branch.
+
+---
 
 **Phase 2: Core Tracking Loop (Daily Form)**
 
-* **Goal:** Implement the simplest way to log habit status for a specific day.
-* **Steps:**
-    1. Define/create `habit_log` table (SQLx migration).
-    2. Create Rust struct for `HabitLog`.
-    3. Implement the **Daily Detail Form** view:
-        * Actix handler GET `/log/{date}`: Fetch scheduled habits for `{date}` (using schedule logic).
-        * Maud template to render the list with `[Complete]`/`[Fail]`/`[Skip]` buttons/forms per habit.
-        * Actix handler POST `/log/{habit_id}/{date}`: Receives `status`, performs INSERT/UPDATE on `habit_log`.
-    4. Integrate HTMX for button clicks (posting status, updating the specific habit row/section via `hx-target`).
-  * **Focus:** Make it possible to log today's status for scheduled habits.
+* **Goal:** Implement the `habit_log` table and the Daily Detail Form to allow logging status (`Completed`, `Failed`, `Skipped`) for a specific day.
+* **Git:**
+  * Sync `master`.
+  * Create branch: `git checkout -b feature/habits-daily-log`
+* **Tasks:**
+    1. **Migrations:** Create migration for `habit_log` table. Run `sqlx migrate run`.
+        * *Commit: `feat(db): add habit_log table for daily tracking`*
+    2. **Model:** Define `HabitLog` struct.
+    3. **Scheduling Logic:** Implement core logic to check if a habit is scheduled for a date.
+        * *Commit: `feat(habits): implement basic habit scheduling logic`*
+    4. **Daily Detail Form - Backend:** Implement DB query to fetch scheduled habits + status. Implement GET `/log/{date}` handler. Implement POST `/log/{habit_id}/{date}` handler for status updates (using `ON CONFLICT` or check).
+        * *Commit: `feat(habits): implement backend for daily log view and status updates`*
+    5. **Daily Detail Form - Frontend:** Create Maud template for `/log/{date}`. Render list with `[Complete]`/`[Fail]`/`[Skip]` buttons/links. Use HTMX for button POSTs, targeting/swapping the habit row fragment on response.
+        * *Commit: `feat(habits): implement daily log form UI with HTMX updates`*
+    6. **Testing:** Add tests for scheduling logic and daily log handlers.
+        * *Commit: `test(habits): add tests for scheduling logic and daily logging`*
+* **Git Workflow:**
+  * Push, PR (`feat: implement daily habit logging form`), Review, Squash & Merge (`feat: implement daily habit logging form (#<PR_Number>)`), Delete branch.
+
+---
 
 **Phase 3: Basic Display & Streaks**
 
-* **Goal:** Show current status and streaks visually.
-* **Steps:**
-    1. Enhance habit lists/views to display the status for "today" (fetched from `habit_log`).
-    2. Implement **Current Streak calculation**. This is complex; use the detailed SQL structure (leveraging `calendar` table and window functions) or implement robust logic in Rust fetching necessary data. Start with daily habits, then add weekly/monthly schedule complexity.
-    3. Display the calculated `current_streak` next to habits in relevant views.
+* **Goal:** Show current status on habit lists and calculate/display the current streak for *daily* habits initially.
+* **Git:**
+  * Sync `master`.
+  * Create branch: `git checkout -b feature/habits-streaks`
+* **Tasks:**
+    1. **Display Today's Status:** Modify habit list views to show status for the current date.
+        * *Commit: `feat(habits): display today's status on habit lists`*
+    2. **Streak Calculation (Daily Habits First):** Implement logic (SQL or Rust) for *current* streak calculation for daily habits. Handle completed/skipped/failed correctly.
+        * *Commit: `feat(habits): implement current streak calculation for daily habits`*
+    3. **Display Streak:** Display the `current_streak` in relevant UI views.
+        * *Commit: `feat(habits): display current streak in UI`*
+    4. **(Optional Deferral):** Tackle weekly/monthly streaks now or defer.
+        * *(If tackled) Commit: `feat(habits): extend streak calculation to weekly/monthly schedules`*
+    5. **Testing:** Add robust unit tests for streak logic.
+        * *Commit: `test(habits): add unit tests for streak calculation`*
+* **Git Workflow:**
+  * Push, PR (`feat: display habit status and calculate streaks`), Review, Squash & Merge (`feat: display habit status and calculate streaks (#<PR_Number>)`), Delete branch.
+
+---
 
 **Phase 4: Grid View Implementation**
 
-* **Goal:** Build the efficient, multi-day overview grid.
-* **Steps:**
-    1. Develop the **Grid View** UI (Maud template) based on the mockup.
-    2. Implement Actix handler GET `/grid` (or similar): Fetches data for habits scheduled over the last ~7 days (joining `habits`, `habit_categories`, `habit_log`). Requires careful date range handling and schedule checking.
-    3. Implement the **click-to-cycle** status update:
-        * Dedicated Actix handler POST `/log/{habit_id}/{date}/cycle`: Calculates next status, updates DB (`habit_log`), returns the updated `<td>` HTML fragment.
-        * Add `hx-post`, `hx-target="this"`, `hx-swap="outerHTML"` attributes to the grid cells in the template.
+* **Goal:** Build the spreadsheet-like Grid View for rapid daily updates.
+* **Git:**
+  * Sync `master`.
+  * Create branch: `git checkout -b feature/habits-grid-view`
+* **Tasks:**
+    1. **Grid View - Backend:** Implement optimized DB query for recent days/habits. Implement GET `/grid` handler. Implement POST `/log/{habit_id}/{date}/cycle` handler returning updated `<td>` fragment.
+        * *Commit: `feat(habits): implement backend logic for grid view data and cycle status endpoint`*
+    2. **Grid View - Frontend:** Create Maud template for grid table. Add HTMX attributes to cells (`hx-post`, `hx-target="this"`, `hx-swap="outerHTML"`).
+        * *Commit: `feat(habits): implement grid view UI with HTMX click-to-cycle updates`*
+    3. **Testing:** Add integration tests for grid view handlers.
+        * *Commit: `test(habits): add integration tests for grid view`*
+* **Git Workflow:**
+  * Push, PR (`feat: implement habit tracking grid view`), Review, Squash & Merge (`feat: implement habit tracking grid view (#<PR_Number>)`), Delete branch.
+
+---
 
 **Phase 5: Notes Implementation (Decoupled)**
 
-* **Goal:** Integrate the flexible notes system.
-* **Steps:**
-    1. Define/create `habit_notes` table (SQLx migration).
-    2. Create Rust struct for `HabitNote`.
-    3. Update **Daily Detail Form**:
-        * Add textarea for notes.
-        * Implement save mechanism (HTMX: GET edit form fragment, POST save). Handler creates/updates `habit_notes` record, ensuring `habit_log_id` is correctly linked.
-    4. Implement **Habit Detail View**:
-        * Actix handler GET `/habit/{habit_id}`: Fetches habit details, stats, and *all* notes (general + log-specific) ordered chronologically.
-        * Maud template to display all fetched info, including the notes feed.
-        * Add form/handler to create *general* notes (POST to `/notes` with `habit_id`, creates `habit_notes` with `habit_log_id = NULL`). Use HTMX to update the notes feed.
-    5. Integrate `pulldown-cmark` for rendering Markdown notes to HTML.
+* **Goal:** Allow users to add Markdown notes associated with specific log entries or the habit generally.
+* **Git:**
+  * Sync `master`.
+  * Create branch: `git checkout -b feature/habits-notes`
+* **Tasks:**
+    1. **Migrations:** Create migration for `habit_notes` table. Run `sqlx migrate run`.
+        * *Commit: `feat(db): add habit_notes table`*
+    2. **Model:** Define `HabitNote` struct.
+    3. **Markdown Rendering:** Integrate `pulldown-cmark` into a utility.
+        * *Commit: `feat(ui): add markdown rendering support for notes`*
+    4. **Daily Detail Notes:** Update Daily Detail Form handler/template for notes textarea. Implement save logic (linking `habit_log_id`). Use HTMX for saving.
+        * *Commit: `feat(habits): allow adding/editing notes on daily log entries`*
+    5. **Habit Detail View:** Implement GET `/habit/{id}` handler fetching habit + all notes. Create Maud template displaying info, stats, notes feed. Add form/handler for *general* notes (POST creates note with `habit_log_id = NULL`). Use HTMX for dynamic updates. Add Edit/Delete links.
+        * *Commit: `feat(habits): implement habit detail view with general notes and notes feed`*
+    6. **Testing:** Add tests for notes CRUD and display logic.
+        * *Commit: `test(habits): add tests for habit notes functionality`*
+* **Git Workflow:**
+  * Push, PR (`feat: implement habit notes (daily and general)`), Review, Squash & Merge (`feat: implement habit notes (daily and general) (#<PR_Number>)`), Delete branch.
+
+---
 
 **Phase 6: Statistics & Visualization**
 
-* **Goal:** Provide long-term analysis tools.
-* **Steps:**
-    1. Design and implement the **Statistics View** UI (Maud template).
-    2. Implement Actix handlers to fetch aggregated data:
-        * `/stats/heatmap/{habit_id}?range=...`: Query `calendar` LEFT JOIN `habit_log` for status per day.
-        * `/stats/trends/{habit_id}?period=...`: Query/aggregate data for completion rates, etc.
-    3. Integrate **Chart.js**: Include library, pass data from handlers to the template (e.g., embed as JSON), use minimal JS to initialize charts.
-    4. Add UI elements (dropdowns, date pickers) for selecting habits, categories, and date ranges, using HTMX to reload stats dynamically.
+* **Goal:** Provide the Statistics View with heatmap and basic trend charts.
+* **Git:**
+  * Sync `master`.
+  * Create branch: `git checkout -b feature/habits-stats`
+* **Tasks:**
+    1. **Heatmap:** Implement DB query for status/day. Implement `/stats/heatmap/{id}` handler. Create Maud template + logic to render heatmap.
+        * *Commit: `feat(habits): implement calendar heatmap visualization`*
+    2. **Trend Charts:** Implement DB queries for aggregated data. Implement handlers returning JSON for Chart.js. Include Chart.js lib. Add JS to stats template to initialize charts from fetched/embedded data.
+        * *Commit: `feat(habits): add basic trend charts (e.g., completion rate)`*
+    3. **Filtering:** Add UI controls (dropdowns, date pickers) to Stats View. Use HTMX (`hx-get`, `hx-target`) to reload heatmap/charts dynamically.
+        * *Commit: `feat(habits): add filtering options to statistics view`*
+    4. **Testing:** Add tests for stats data calculation/handlers. Perform manual visualization testing.
+        * *Commit: `test(habits): add tests for statistics data endpoints`*
+* **Git Workflow:**
+  * Push, PR (`feat: implement statistics view with heatmap and charts`), Review, Squash & Merge (`feat: implement statistics view with heatmap and charts (#<PR_Number>)`), Delete branch.
+
+---
 
 **Phase 7: Refinement & Polish**
 
-* **Goal:** Improve usability, robustness, and performance.
-* **Steps:**
-    1. Refine UI styling (apply Water.css consistently, improve layout).
-    2. Address responsiveness, especially for the Grid View on mobile.
-    3. Implement keyboard navigation for the Grid View (JavaScript required).
-    4. Enhance error handling (backend and frontend via HTMX error targets).
-    5. Optimize complex SQL queries (analyze query plans, ensure proper indexing).
-    6. Add automated tests (unit tests for logic, integration tests for handlers).
-    7. Review and improve code quality.
+* **Goal:** Improve usability, fix bugs, optimize performance, enhance styling, add deferred features.
+* **Git:**
+  * Sync `master`.
+  * Create branch: `git checkout -b chore/habits-polish` (or `feature/*` for larger items)
+* **Tasks:** (Address issues from dogfooding/development)
+    1. **Complex Streaks (if deferred):** Implement/test weekly/monthly streak logic.
+    2. **UI/UX:** Refine layouts, responsiveness, styling (Water.css).
+    3. **Performance:** Analyze queries (`EXPLAIN QUERY PLAN`), add indexes, optimize backend.
+    4. **Error Handling:** Improve user feedback on errors (backend/frontend).
+    5. **Accessibility:** Basic review.
+    6. **Code Quality:** Refactor, improve comments, ensure linters pass.
+    7. **Comprehensive Testing:** Add missing test cases.
+  * *(Use varied commits: `fix:`, `refactor:`, `style:`, `perf:`, `feat:`, `test:`)*
+* **Git Workflow:**
+  * Push, PR (`chore: refine and polish habit tracking feature`), Review, Squash & Merge (`chore: refine and polish habit tracking feature (#<PR_Number>)`), Delete branch.
+
+---
 
 ### B. Data Model (SQLite)
 
