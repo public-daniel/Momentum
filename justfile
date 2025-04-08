@@ -128,12 +128,12 @@ docs:
 # Run the project (debug mode)
 run: build
     @echo "Running project (debug)..."
-    @cargo run
+    @cargo run -- run
 
 # Run with release optimizations
 run-release: release
     @echo "Running release version..."
-    @cargo run --release
+    @cargo run --release -- run
 
 # --- CI Tasks ---
 # Comprehensive task typically run in Continuous Integration
